@@ -1,16 +1,17 @@
+using System;
 using System.Collections;
-using TMPro;
 using UnityEngine;
 
 public class Counter : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI _text;
     [SerializeField] private Clicker _clicker;
     [SerializeField] private float _timeToWait;
     [SerializeField] private int _step;
 
+    public event Action<int> ValueChanged;
+
+    private bool _isCountdown;
     private int _counterValue;
-    private bool _is—ountdown;
 
     private void OnEnable()
     {
@@ -20,7 +21,7 @@ public class Counter : MonoBehaviour
     private void Start()
     {
         _counterValue = 0;
-        _is—ountdown = false;
+        _isCountdown = false;
     }
 
     private void OnDisable()
@@ -30,12 +31,12 @@ public class Counter : MonoBehaviour
 
     private void ChangeValue()
     {
-        if (_is—ountdown)
+        if (_isCountdown)
             StopCoroutine(ChangeCounterValue());
 
-        _is—ountdown = !_is—ountdown;
+        _isCountdown = !_isCountdown;
         
-        if(_is—ountdown)
+        if(_isCountdown)
             StartCoroutine(ChangeCounterValue());
     }
 
@@ -43,11 +44,11 @@ public class Counter : MonoBehaviour
     {
         var timeToWait = new WaitForSeconds(_timeToWait);
 
-        while(_is—ountdown)
+        while(_isCountdown)
         {
             yield return timeToWait;
             _counterValue++;
-            _text.text = _counterValue.ToString("");
+            ValueChanged?.Invoke(_counterValue);
         }
     }
 }
