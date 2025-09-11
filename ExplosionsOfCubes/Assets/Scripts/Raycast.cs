@@ -1,11 +1,12 @@
 using System;
 using UnityEngine;
 
-public class UserInput : MonoBehaviour
+public class Raycast : MonoBehaviour
 {
     [SerializeField] private Camera _camera;
+    [SerializeField] private UserReader _userReader;
 
-    public const int IndexButton = 0;
+    public event Action<Cube> OnCubeFound;
 
     private string _invisibleLayerName = "InvisibleWall";
     private float _maxDistance = 1000f;
@@ -18,22 +19,26 @@ public class UserInput : MonoBehaviour
         _wallLayer = ~LayerMask.GetMask(_invisibleLayerName);
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        if (Input.GetMouseButtonDown(IndexButton))
-            SearchObjects();
+        _userReader.OnMouseClicked += SearchCubes;
     }
 
-    private void SearchObjects()
+    private void OnDisable()
+    {
+        _userReader.OnMouseClicked -= SearchCubes;
+    }
+
+    private void SearchCubes()
     {
         _ray = _camera.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
         if (Physics.Raycast(_ray, out hit, _maxDistance, _wallLayer))
         {
-            if (hit.collider.TryGetComponent(out Explosion explosion))
+            if (hit.collider.TryGetComponent(out Cube cube))
             {
-                explosion.BlowUp();
+                OnCubeFound?.Invoke(cube);
             }
         }
     }
