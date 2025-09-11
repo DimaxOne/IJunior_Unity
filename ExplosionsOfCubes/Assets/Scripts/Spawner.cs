@@ -21,23 +21,23 @@ public class Spawner : MonoBehaviour
         return new List<Cube>(cubes);
     }
 
-    public void CreatedCubes(Cube initial—ube, List<Cube> cubes)
+    public void CreatedCubes(Cube initialCube, List<Cube> cubes)
     {
         int count = Random.Range(_minimumRandomCubes, _maximumRandomCubes + 1);
 
-        Vector3 spawnPosition = initial—ube.transform.position + Random.insideUnitSphere * _radius;
-        Vector3 localScale = initial—ube.transform.localScale / _divisor;
+        Vector3 spawnPosition = initialCube.transform.position + Random.insideUnitSphere * _radius;
+        Vector3 localScale = initialCube.transform.localScale / _divisor;
 
         for (int i = 0; i < count; i++)
         {
-            Cube Òube = Instantiate(_prefab, spawnPosition, Quaternion.identity);
+            Cube cube = Instantiate(_prefab, spawnPosition, Quaternion.identity);
 
-            Cube separator = Òube.GetComponent<Cube>();
-            separator.InheritProbabilityValue(initial—ube.ChanceSeparation);
+            Cube separator = cube.GetComponent<Cube>();
+            separator.InheritProbabilityValue(initialCube.ChanceSeparation);
 
-            Òube.transform.localScale = localScale;
+            cube.transform.localScale = localScale;
 
-            cubes.Add(Òube);
+            cubes.Add(cube);
         }
     }
 }
